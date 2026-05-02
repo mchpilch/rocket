@@ -1,7 +1,8 @@
 
 
-import { Application, Assets, Sprite, Ticker } from 'pixi.js';
+import { Application, Assets, Container, Sprite, Ticker } from 'pixi.js';
 import { AxisHelper } from '../engine/utils/axisHelper';
+import { CameraController } from '../engine/camera/cameraController';
 
 type GameInitData = {
     app: Application,
@@ -13,12 +14,14 @@ export class Game {
     private initialized!: boolean;
 
     private app!: Application;
-    // private fenParser!: FenParser;
 
     //---Controllers
+    private cameraController!: CameraController;
 
     //---Views
+    private worldContainer!: Container;
     private bunny!: Sprite;
+    private helper!: AxisHelper;
 
     private constructor() {
         this.initialized = false;
@@ -46,12 +49,27 @@ export class Game {
 
         this.app.stage.interactive = true;
 
-        await this.createTestBunny();
-        await this.createAxisHelper();
+        await this.createWorld();
+
+        this.cameraController = new CameraController(
+            this.app.canvas,
+            this.worldContainer
+        );
 
         this.app.ticker.add(this.update, this);
     }
 
+    private async createWorld(): Promise<void> {
+
+        await this.createTestBunny();
+        await this.createAxisHelper();
+
+
+        this.worldContainer = new Container();
+        this.worldContainer.addChild(this.bunny);
+        this.worldContainer.addChild(this.helper);
+        this.app.stage.addChild(this.worldContainer);
+    }
     private async createTestBunny(): Promise<void> {
         const texture = await Assets.load("/assets/bunny.png");
 
@@ -66,11 +84,12 @@ export class Game {
     }
 
     private async createAxisHelper(): Promise<void> {
-        
+
         const helper = new AxisHelper({
             length: 200,
             flipY: false,
         });
+        this.helper = helper;
         this.app.stage.addChild(helper);
         helper.position.set(50, 100);
     }
