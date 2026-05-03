@@ -20,6 +20,12 @@ export class Vec2 {
         return this;
     }
 
+    public set(x: number, y: number): this {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
     public clone(): Vec2 {
         return new Vec2(this.x, this.y);
     }

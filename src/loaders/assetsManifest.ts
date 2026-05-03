@@ -4,7 +4,7 @@ export const assetsManifest = {
         {
             name: "game",
             assets: [
-                { alias: "bunny", src: "/assets/bunny.png" },
+                { alias: "bunnyTexture", src: "/assets/bunny.png" },
             ],
         },
     ],

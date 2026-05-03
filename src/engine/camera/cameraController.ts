@@ -36,11 +36,11 @@ export class CameraController {
       return;
     }
 
-    const deltaX = event.clientX - this.lastPointerX; 
-    const deltaY = event.clientY - this.lastPointerY; 
+    const deltaX = event.clientX - this.lastPointerX;
+    const deltaY = event.clientY - this.lastPointerY;
 
-    this.target.position.x += deltaX; 
-    this.target.position.y += deltaY; 
+    this.target.position.x += deltaX;
+    this.target.position.y += deltaY;
 
     this.lastPointerX = event.clientX;
     this.lastPointerY = event.clientY;
