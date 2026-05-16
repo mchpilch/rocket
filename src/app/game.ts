@@ -4,10 +4,13 @@ import { Application, Assets, Container, Sprite, Ticker } from 'pixi.js';
 import { AxisHelper } from '../engine/utils/axisHelper';
 import { CameraController } from '../engine/camera/cameraController';
 import { UnitConverter } from '../engine/utils/unitConverter';
-import { BoxEntity } from '../game/boxEntity';
-import { RigidBody2D } from '../engine/physics/rigidBody2d';
-import { BoxView } from '../views/boxView';
+import { BoxEntity } from '../engine/entities/boxEntity';
+import { RigidBody2D } from '../engine/physics/bodies/rigidBody2d';
 import { PhysicsWorld } from '../engine/physics/physicsWorld';
+import { LineEntity } from '../engine/entities/lineEntity';
+import { LineSegment2d } from '../engine/physics/bodies/lineSegment2d';
+import { LineView } from '../engine/views/lineView';
+import { BoxView } from '../engine/views/boxView';
 
 type GameInitData = {
     app: Application,
@@ -30,6 +33,7 @@ export class Game {
     private bunny!: Sprite;
     private helper!: AxisHelper;
     private boxes: BoxEntity[] = [];
+    private lines: LineEntity[] = [];
 
     private constructor() {
         this.initialized = false;
@@ -76,7 +80,6 @@ export class Game {
         this.createTestBunny();
         this.createAxisHelper();
 
-
         this.worldContainer = new Container();
         this.worldContainer.addChild(this.bunny);
         this.worldContainer.addChild(this.helper);
@@ -88,6 +91,7 @@ export class Game {
         // this.createBox(tempOffsetX + 4, 0);
         // this.createBox(tempOffsetX + 6, 0);
         // this.createBox(tempOffsetX + 8, 0);
+        this.createFloor();
     }
     private createTestBunny(): void {
 
@@ -103,12 +107,12 @@ export class Game {
     }
     private createAxisHelper(): void {
         const helper = new AxisHelper({
-            length: 200,
+            lengthMeters: 6,
             flipY: false,
         });
         this.helper = helper;
         this.app.stage.addChild(helper);
-        helper.position.set(50, 100);
+        helper.position.set(0, 0);
     }
 
     private createBox(xMeters: number, yMeters: number): void {
@@ -121,8 +125,8 @@ export class Game {
         console.log('xxx this.unitConverter', this.unitConverter);
 
         const view = new BoxView(
-            1, // width in meters
-            1, // height in meters
+            3, // width in meters
+            3, // height in meters
             this.unitConverter
         );
 
@@ -134,6 +138,22 @@ export class Game {
         this.boxes.push(box);
     }
 
+    private createFloor(): void {
+        
+        const line = new LineSegment2d({
+            x1: -5, y1: 5,
+            x2: 10, y2: 5,
+        });
+
+        const view = new LineView(this.unitConverter, 0x00ff00, 10);
+
+        const floor = new LineEntity(line, view);
+        floor.updateView();
+
+        this.worldContainer.addChild(floor.view.graphics);
+        this.lines.push(floor);
+    }
+
     private update(ticker: Ticker): void {
         this.bunny.rotation += 0.1 * ticker.deltaTime;
 
@@ -142,6 +162,7 @@ export class Game {
 
         for (const box of this.boxes) {
             box.updateView();
+            box.resolveTemporaryFloorCollision(); // [TEMP]
         }
     }
 }

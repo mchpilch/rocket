@@ -1,15 +1,20 @@
 import { Graphics } from "pixi.js";
-import { UnitConverter } from "../engine/utils/unitConverter";
-import { RigidBody2D } from "../engine/physics/rigidBody2d";
+import { UnitConverter } from "../utils/unitConverter";
+import { RigidBody2D } from "../physics/bodies/rigidBody2d";
 
 export class BoxView {
+
   public readonly graphics: Graphics;
+  private widthMeters: number;
+  private heightMeters: number;
 
   constructor(
     widthMeters: number,
     heightMeters: number,
     private readonly unitConverter: UnitConverter
   ) {
+    this.widthMeters = widthMeters;
+    this.heightMeters = heightMeters;
     const widthPx = this.unitConverter.metersToPixels(widthMeters);
     const heightPx = this.unitConverter.metersToPixels(heightMeters);
 
@@ -23,5 +28,13 @@ export class BoxView {
       this.unitConverter.metersToPixels(body.position.x),
       this.unitConverter.metersToPixels(body.position.y)
     );
+  }
+
+  public getWidthMeters(): number {
+    return this.widthMeters;
+  }
+
+  public getHeightMeters(): number {
+    return this.heightMeters;
   }
 }
