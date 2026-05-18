@@ -11,6 +11,8 @@ import { LineEntity } from '../engine/entities/lineEntity';
 import { LineSegment2d } from '../engine/physics/bodies/lineSegment2d';
 import { LineView } from '../engine/views/lineView';
 import { BoxView } from '../engine/views/boxView';
+import { CircleView } from '../engine/views/circleView';
+import { CircleEntity } from '../engine/entities/circleEntity';
 
 type GameInitData = {
     app: Application,
@@ -30,10 +32,11 @@ export class Game {
 
     //---Views
     private worldContainer!: Container;
-    private bunny!: Sprite;
+    // private bunny!: Sprite;
     private helper!: AxisHelper;
     private boxes: BoxEntity[] = [];
     private lines: LineEntity[] = [];
+    private circles: CircleEntity[] = [];
 
     private constructor() {
         this.initialized = false;
@@ -77,11 +80,11 @@ export class Game {
 
     private createWorld(): void {
 
-        this.createTestBunny();
+        // this.createTestBunny();
         this.createAxisHelper();
 
         this.worldContainer = new Container();
-        this.worldContainer.addChild(this.bunny);
+        // this.worldContainer.addChild(this.bunny);
         this.worldContainer.addChild(this.helper);
         this.app.stage.addChild(this.worldContainer);
 
@@ -91,20 +94,21 @@ export class Game {
         // this.createBox(tempOffsetX + 4, 0);
         // this.createBox(tempOffsetX + 6, 0);
         // this.createBox(tempOffsetX + 8, 0);
+        this.createCircle(tempOffsetX + 6, 0);
         this.createFloor();
     }
-    private createTestBunny(): void {
+    // private createTestBunny(): void {
 
-        const texture = Assets.get("bunnyTexture");
-        this.bunny = new Sprite(texture);
-        this.bunny.anchor.set(0.5);
-        this.bunny.position.set(
-            this.app.screen.width / 2,
-            this.app.screen.height / 2
-        );
+    //     const texture = Assets.get("bunnyTexture");
+    //     this.bunny = new Sprite(texture);
+    //     this.bunny.anchor.set(0.5);
+    //     this.bunny.position.set(
+    //         this.app.screen.width / 2,
+    //         this.app.screen.height / 2
+    //     );
 
-        this.app.stage.addChild(this.bunny);
-    }
+    //     this.app.stage.addChild(this.bunny);
+    // }
     private createAxisHelper(): void {
         const helper = new AxisHelper({
             lengthMeters: 6,
@@ -138,14 +142,34 @@ export class Game {
         this.boxes.push(box);
     }
 
+    private createCircle(xMeters: number, yMeters: number): void {
+        const body = new RigidBody2D({
+            x: xMeters,
+            y: yMeters,
+            mass: 1,
+        });
+
+        const view = new CircleView(
+            1, // radius in meters
+            this.unitConverter
+        );
+
+        const circle = new CircleEntity(body, view);
+
+        this.physicsWorld.addBody(circle.body);
+        this.worldContainer.addChild(circle.view.graphics);
+
+        this.circles.push(circle);
+    }
+
     private createFloor(): void {
-        
+
         const line = new LineSegment2d({
             x1: -5, y1: 5,
             x2: 10, y2: 5,
         });
 
-        const view = new LineView(this.unitConverter, 0x00ff00, 10);
+        const view = new LineView(this.unitConverter, 0x00ff00, 1);
 
         const floor = new LineEntity(line, view);
         floor.updateView();
@@ -155,7 +179,7 @@ export class Game {
     }
 
     private update(ticker: Ticker): void {
-        this.bunny.rotation += 0.1 * ticker.deltaTime;
+        // this.bunny.rotation += 0.1 * ticker.deltaTime;
 
         const dt = ticker.deltaMS / 1000;
         this.physicsWorld.step(dt);
@@ -163,6 +187,10 @@ export class Game {
         for (const box of this.boxes) {
             box.updateView();
             box.resolveTemporaryFloorCollision(); // [TEMP]
+        }
+        for (const circle of this.circles) {
+            circle.updateView();
+            circle.resolveTemporaryFloorCollision(); // [TEMP]
         }
     }
 }

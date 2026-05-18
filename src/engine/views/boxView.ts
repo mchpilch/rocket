@@ -20,7 +20,11 @@ export class BoxView {
 
     this.graphics = new Graphics()
       .rect(-widthPx / 2, -heightPx / 2, widthPx, heightPx)
-      .fill(0xff0000);
+      // .fill(0xff0000)
+      .stroke({
+        width: 2,
+        color: 0xff0000,
+      });
   }
 
   public syncFrom(body: RigidBody2D): void {
