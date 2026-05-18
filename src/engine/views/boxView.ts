@@ -25,6 +25,7 @@ export class BoxView {
         width: 2,
         color: 0xff0000,
       });
+      console.log('xxx BoxView created with widthMeters:', widthMeters, 'heightMeters:', heightMeters);
   }
 
   public syncFrom(body: RigidBody2D): void {

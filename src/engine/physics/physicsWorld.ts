@@ -23,7 +23,7 @@ export class PhysicsWorld {
       body.position.y += body.velocity.y * dt;
     //   console.log('xxx body.position.y', body.position.y);
       // console.log('xxx body.velocity.y', body.position.y);
-      console.log('xxx dt', dt);
+      // console.log('xxx dt', dt);
       
     }
   }

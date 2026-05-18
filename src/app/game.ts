@@ -67,6 +67,7 @@ export class Game {
         this.unitConverter = new UnitConverter(100); // 1 meter = 100 pixels
 
         this.physicsWorld = new PhysicsWorld();
+
         this.createWorld();
 
         this.cameraController = new CameraController(
@@ -74,7 +75,18 @@ export class Game {
             this.worldContainer
         );
 
+        this.app.stage.eventMode = "static";
+        this.app.stage.hitArea = this.app.screen;
 
+        this.app.stage.on("pointerdown", (e) => {
+            // console.log('Pointer down at:', e.global);
+            if (e.button === 0) {
+                // console.log('Pointer down at2:', e.global);
+                const xM = this.unitConverter.pixelsToMeters(e.global.x);
+                const yM = this.unitConverter.pixelsToMeters(e.global.y);
+                this.createBox(xM, yM);
+            }
+        });
         this.app.ticker.add(this.update, this);
     }
 
@@ -90,10 +102,8 @@ export class Game {
 
         let tempOffsetX = 2;
         this.createBox(tempOffsetX + 0, 0);
-        // this.createBox(tempOffsetX + 2, 0);
-        // this.createBox(tempOffsetX + 4, 0);
-        // this.createBox(tempOffsetX + 6, 0);
-        // this.createBox(tempOffsetX + 8, 0);
+        this.createBox(tempOffsetX + 2, 0);
+
         this.createCircle(tempOffsetX + 6, 0);
         this.createFloor();
     }
@@ -126,11 +136,11 @@ export class Game {
             mass: 1,
         });
 
-        console.log('xxx this.unitConverter', this.unitConverter);
+        // console.log('xxx this.unitConverter', this.unitConverter);
 
         const view = new BoxView(
-            3, // width in meters
-            3, // height in meters
+            1, // width in meters
+            1, // height in meters
             this.unitConverter
         );
 
@@ -140,6 +150,7 @@ export class Game {
         this.worldContainer.addChild(box.view.graphics);
 
         this.boxes.push(box);
+        console.log('xxx box created at', xMeters, yMeters);
     }
 
     private createCircle(xMeters: number, yMeters: number): void {
