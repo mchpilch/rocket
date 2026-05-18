@@ -13,6 +13,8 @@ import { LineView } from '../engine/views/lineView';
 import { BoxView } from '../engine/views/boxView';
 import { CircleView } from '../engine/views/circleView';
 import { CircleEntity } from '../engine/entities/circleEntity';
+import { PolygonEntity } from '../engine/entities/polygonEntity';
+import { PolygonView } from '../engine/views/polygonView';
 
 type GameInitData = {
     app: Application,
@@ -37,6 +39,15 @@ export class Game {
     private boxes: BoxEntity[] = [];
     private lines: LineEntity[] = [];
     private circles: CircleEntity[] = [];
+    private polygons: PolygonEntity[] = [];
+
+    private isCKeyPressed: boolean = false; // customise more later to add creating of circles, boxes, polygons with n angles etc.
+    private is3KeyPressed: boolean = false; // todo
+    private is4KeyPressed: boolean = false; // todo
+    private is5KeyPressed: boolean = false; // todo
+    private is6KeyPressed: boolean = false; // todo
+    private is7KeyPressed: boolean = false; // todo
+    private is8KeyPressed: boolean = false; // todo
 
     private constructor() {
         this.initialized = false;
@@ -80,13 +91,32 @@ export class Game {
 
         this.app.stage.on("pointerdown", (e) => {
             // console.log('Pointer down at:', e.global);
-            if (e.button === 0) {
+            if (e.button === 0 && this.isCKeyPressed) { // leftCLick
                 // console.log('Pointer down at2:', e.global);
                 const xM = this.unitConverter.pixelsToMeters(e.global.x);
                 const yM = this.unitConverter.pixelsToMeters(e.global.y);
                 this.createBox(xM, yM);
             }
         });
+
+        // Track if the "c" key is currently being held down
+        this.isCKeyPressed = false;
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'c' || e.key === 'C') {
+                this.isCKeyPressed = true;
+                console.log('C key pressed');
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'c' || e.key === 'C') {
+                this.isCKeyPressed = false;
+                console.log('C key released');
+            }
+        });
+
+
         this.app.ticker.add(this.update, this);
     }
 
@@ -102,9 +132,12 @@ export class Game {
 
         let tempOffsetX = 2;
         this.createBox(tempOffsetX + 0, 0);
-        this.createBox(tempOffsetX + 2, 0);
+        this.createCircle(tempOffsetX + 2, 0);
 
-        this.createCircle(tempOffsetX + 6, 0);
+        this.createPolygon(tempOffsetX + 3, 0, 5); // Create a pentagon
+        this.createPolygon(tempOffsetX + 4, 0, 6); // Create a hexagon
+        this.createPolygon(tempOffsetX + 5, 0, 7); // Create a septagon
+        this.createPolygon(tempOffsetX + 6, 0, 8); // Create a octagon 
         this.createFloor();
     }
     // private createTestBunny(): void {
@@ -153,7 +186,7 @@ export class Game {
         console.log('xxx box created at', xMeters, yMeters);
     }
 
-    private createCircle(xMeters: number, yMeters: number): void {
+    private createCircle(xMeters: number, yMeters: number, radiusMeters: number = 0.5): void {
         const body = new RigidBody2D({
             x: xMeters,
             y: yMeters,
@@ -161,7 +194,7 @@ export class Game {
         });
 
         const view = new CircleView(
-            1, // radius in meters
+            radiusMeters, // radius in meters
             this.unitConverter
         );
 
@@ -171,6 +204,31 @@ export class Game {
         this.worldContainer.addChild(circle.view.graphics);
 
         this.circles.push(circle);
+    }
+    private createPolygon(
+        xMeters: number,
+        yMeters: number,
+        numberOfSides: number,
+        radiusMeters: number = 0.5
+    ): void {
+        const body = new RigidBody2D({
+            x: xMeters,
+            y: yMeters,
+            mass: 1,
+        });
+
+        const view = new PolygonView(
+            numberOfSides, // number of sides
+            radiusMeters, // radius in meters
+            this.unitConverter
+        );
+
+        const polygon = new PolygonEntity(body, view);
+
+        this.physicsWorld.addBody(polygon.body);
+        this.worldContainer.addChild(polygon.view.graphics);
+
+        this.polygons.push(polygon);
     }
 
     private createFloor(): void {
@@ -202,6 +260,10 @@ export class Game {
         for (const circle of this.circles) {
             circle.updateView();
             circle.resolveTemporaryFloorCollision(); // [TEMP]
+        }
+        for (const polygon of this.polygons) {
+            polygon.updateView();
+            polygon.resolveTemporaryFloorCollision(); // [TEMP]
         }
     }
 }
