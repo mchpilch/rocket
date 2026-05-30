@@ -5,10 +5,10 @@ import { AxisHelper } from '../engine/utils/axisHelper';
 import { CameraController } from '../engine/camera/cameraController';
 import { UnitConverter } from '../engine/utils/unitConverter';
 import { BoxEntity } from '../engine/entities/boxEntity';
-import { RigidBody2D } from '../engine/physics/bodies/rigidBody2d';
+import { RigidBody2D } from '../engine/physics/bodies/rigidBody2D';
 import { PhysicsWorld } from '../engine/physics/physicsWorld';
 import { LineEntity } from '../engine/entities/lineEntity';
-import { LineSegment2d } from '../engine/physics/bodies/lineSegment2d';
+import { LineSegment2D } from '../engine/physics/bodies/lineSegment2D';
 import { LineView } from '../engine/views/lineView';
 import { BoxView } from '../engine/views/boxView';
 import { CircleView } from '../engine/views/circleView';
@@ -42,6 +42,7 @@ export class Game {
     private polygons: PolygonEntity[] = [];
 
     private isCKeyPressed: boolean = false; // customise more later to add creating of circles, boxes, polygons with n angles etc.
+    private is2KeyPressed: boolean = false; // todo
     private is3KeyPressed: boolean = false; // todo
     private is4KeyPressed: boolean = false; // todo
     private is5KeyPressed: boolean = false; // todo
@@ -95,24 +96,58 @@ export class Game {
                 // console.log('Pointer down at2:', e.global);
                 const xM = this.unitConverter.pixelsToMeters(e.global.x);
                 const yM = this.unitConverter.pixelsToMeters(e.global.y);
-                this.createBox(xM, yM);
+                
+                switch (true) {
+                    case this.is2KeyPressed:
+                        this.createCircle(xM, yM);
+                        break;
+
+                    case this.is3KeyPressed:
+                        this.createPolygon(xM, yM, 3);
+                        break;
+
+                    case this.is4KeyPressed:
+                        this.createBox(xM, yM);
+                        break;
+
+                    default:
+                        this.createBox(xM, yM);
+                        break;
+                }
             }
         });
 
-        // Track if the "c" key is currently being held down
-        this.isCKeyPressed = false;
-
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'c' || e.key === 'C') {
-                this.isCKeyPressed = true;
-                console.log('C key pressed');
+            switch (e.key.toLowerCase()) {
+                case 'c':
+                    this.isCKeyPressed = true;
+                    break;
+                case '2':
+                    this.is2KeyPressed = true;
+                    break;
+                case '3':
+                    this.is3KeyPressed = true;
+                    break;
+                case '4':
+                    this.is4KeyPressed = true;
+                    break;
             }
         });
 
         window.addEventListener('keyup', (e) => {
-            if (e.key === 'c' || e.key === 'C') {
-                this.isCKeyPressed = false;
-                console.log('C key released');
+            switch (e.key.toLowerCase()) {
+                case 'c':
+                    this.isCKeyPressed = false;
+                    break;
+                case '2':
+                    this.is2KeyPressed = false;
+                    break;
+                case '3':
+                    this.is3KeyPressed = false;
+                    break;
+                case '4':
+                    this.is4KeyPressed = false;
+                    break;
             }
         });
 
@@ -130,14 +165,14 @@ export class Game {
         this.worldContainer.addChild(this.helper);
         this.app.stage.addChild(this.worldContainer);
 
-        let tempOffsetX = 2;
+        let tempOffsetX = 0;
         this.createBox(tempOffsetX + 0, 0);
-        this.createCircle(tempOffsetX + 2, 0);
+        // this.createCircle(tempOffsetX + 2, 0);
 
-        this.createPolygon(tempOffsetX + 3, 0, 5); // Create a pentagon
-        this.createPolygon(tempOffsetX + 4, 0, 6); // Create a hexagon
-        this.createPolygon(tempOffsetX + 5, 0, 7); // Create a septagon
-        this.createPolygon(tempOffsetX + 6, 0, 8); // Create a octagon 
+        // this.createPolygon(tempOffsetX + 3, 0, 5); // Create a pentagon
+        // this.createPolygon(tempOffsetX + 4, 0, 6); // Create a hexagon
+        // this.createPolygon(tempOffsetX + 5, 0, 7); // Create a septagon
+        // this.createPolygon(tempOffsetX + 6, 0, 8); // Create a octagon 
         this.createFloor();
     }
     // private createTestBunny(): void {
@@ -167,6 +202,8 @@ export class Game {
             x: xMeters,
             y: yMeters,
             mass: 1,
+            width: 1, // meters
+            height: 1, // meters
         });
 
         // console.log('xxx this.unitConverter', this.unitConverter);
@@ -191,6 +228,8 @@ export class Game {
             x: xMeters,
             y: yMeters,
             mass: 1,
+            width: 1, // meters
+            height: 1, // meters
         });
 
         const view = new CircleView(
@@ -215,6 +254,7 @@ export class Game {
             x: xMeters,
             y: yMeters,
             mass: 1,
+            collider: null, // collider2DBox, // todo
         });
 
         const view = new PolygonView(
@@ -233,7 +273,7 @@ export class Game {
 
     private createFloor(): void {
 
-        const line = new LineSegment2d({
+        const line = new LineSegment2D({
             x1: -5, y1: 5,
             x2: 10, y2: 5,
         });

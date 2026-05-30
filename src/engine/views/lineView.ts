@@ -1,5 +1,5 @@
 import { Graphics } from "pixi.js";
-import { LineSegment2d } from "../physics/bodies/lineSegment2d";
+import { LineSegment2D } from "../physics/bodies/lineSegment2D";
 import { UnitConverter } from "../utils/unitConverter";
 
 export class LineView {
@@ -13,7 +13,7 @@ export class LineView {
         this.graphics = new Graphics();
     }
 
-    public syncFrom(line: LineSegment2d): void {
+    public syncFrom(line: LineSegment2D): void {
         this.graphics.clear();
 
         this.graphics

@@ -1,5 +1,5 @@
 import { physicsConfig } from "../../configs/physicsConfig";
-import { RigidBody2D } from "./bodies/rigidBody2d";
+import { RigidBody2D } from "./bodies/rigidBody2D";
 import { Vec2 } from "./vec2";
 
 

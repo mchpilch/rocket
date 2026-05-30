@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 import { UnitConverter } from "../utils/unitConverter";
-import { RigidBody2D } from "../physics/bodies/rigidBody2d";
+import { RigidBody2D } from "../physics/bodies/rigidBody2D";
 
 export class BoxView {
 
@@ -19,8 +19,8 @@ export class BoxView {
     const heightPx = this.unitConverter.metersToPixels(heightMeters);
 
     this.graphics = new Graphics()
-      .rect(-widthPx / 2, -heightPx / 2, widthPx, heightPx)
-      // .fill(0xff0000)
+      .rect(-widthPx / 2, -heightPx / 2, widthPx, heightPx) // needs to ne moved on init cause pixi draws it from side
+      // .fill(0xff0000)c
       .stroke({
         width: 2,
         color: 0xff0000,

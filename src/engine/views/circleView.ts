@@ -1,6 +1,6 @@
 import { Graphics } from "pixi.js";
 import { UnitConverter } from "../utils/unitConverter";
-import { RigidBody2D } from "../physics/bodies/rigidBody2d";
+import { RigidBody2D } from "../physics/bodies/rigidBody2D";
 
 export class CircleView {
 

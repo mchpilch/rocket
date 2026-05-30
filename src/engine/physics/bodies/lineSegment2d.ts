@@ -1,6 +1,6 @@
 import { Vec2 } from "../vec2";
 
-export class LineSegment2d {
+export class LineSegment2D {
 
     public readonly start = new Vec2();
     public readonly end = new Vec2();

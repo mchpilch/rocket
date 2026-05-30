@@ -1,4 +1,4 @@
-import { RigidBody2D } from "../physics/bodies/rigidBody2d";
+import { RigidBody2D } from "../physics/bodies/rigidBody2D";
 import { BoxView } from "../views/boxView";
 
 export class BoxEntity {
