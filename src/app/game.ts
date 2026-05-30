@@ -94,8 +94,10 @@ export class Game {
             // console.log('Pointer down at:', e.global);
             if (e.button === 0 && this.isCKeyPressed) { // leftCLick
                 // console.log('Pointer down at2:', e.global);
-                const xM = this.unitConverter.pixelsToMeters(e.global.x);
-                const yM = this.unitConverter.pixelsToMeters(e.global.y);
+                const worldPoint = this.worldContainer.toLocal(e.global);
+
+                const xM = this.unitConverter.pixelsToMeters(worldPoint.x);
+                const yM = this.unitConverter.pixelsToMeters(worldPoint.y);
                 
                 switch (true) {
                     case this.is2KeyPressed:

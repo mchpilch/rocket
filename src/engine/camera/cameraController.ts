@@ -29,6 +29,8 @@ export class CameraController {
     this.isDragging = true;
     this.lastPointerX = event.clientX;
     this.lastPointerY = event.clientY;
+    console.log('Pointer down at:', event.clientX, event.clientY);
+    
   };
 
   private handlePointerMove = (event: PointerEvent): void => {
